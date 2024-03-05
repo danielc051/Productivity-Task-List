@@ -2,30 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bungee&family=Noto+Sans:wght@100;200;300;400;500;600&display=swap"
       rel="stylesheet"
     />
-
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+      integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-
-    <title>Task List</title>
+    <title>Productivity List</title>
     <style>
       html {
         font-family: "Noto sans", sans-serif;
       }
 
       h1 {
-        font-family: "Noto sans", sans-serif;
+        font-family: "Bungee", sans-serif;
       }
 
       * {
@@ -37,7 +36,7 @@
 
       body {
         min-height: 100vh;
-        background-color: #0b7285;
+        background: #1864ab;
         color: white;
         display: flex;
         flex-direction: column;
@@ -62,69 +61,151 @@
       main {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 24px;
         flex: 1;
-      }
-
-      .plusIcon {
-        font-size: 1.5rem;
-        cursor: pointer;
-      }
-
-      .plusIcon:hover {
-        color: black;
       }
 
       #enterTask form {
         display: flex;
-        align-items: center;
-        border: 1px solid #0c8599;
+        align-items: stretch;
+        border: 1px solid white;
+        position: relative;
+      }
+
+      #enterTask form:focus-within {
+        border-color: black;
       }
 
       #enterTask input {
-        background: transparent;
         outline: none;
-        padding: 4px 8px;
+        padding: 12px;
         color: white;
         flex: 1;
         border: none;
+        max-width: 100%;
+        background-color: white;
       }
 
       #enterTask button {
-        background: #0c8599;
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        background: skyblue;
         border: none;
         outline: none;
         padding: 0 12px;
-        color: black;
-        font-family: "Noto sans", sans-serif;
+        color: #1864ab;
+        font-family: "Bungee", sans-serif;
         cursor: pointer;
       }
 
       #enterTask button:hover {
-        background: transparent;
-        color: #0c8599;
+        background: white;
+        color: skyblue;
+      }
+
+      #tasks {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .taskItem {
+        display: flex;
+        align-items: center;
+      }
+
+      .taskItem p {
+        flex: 1;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+      }
+
+      .actions i:hover {
+        color: #228be6;
+      }
+
+      footer {
+        display: grid;
+        place-items: center;
+        font-family: arial;
+        font-size: 24px;
       }
     </style>
   </head>
+
   <body>
     <header>
       <h1>Today's Task List</h1>
-      <i class="fa-solid fa-plus plusIcon"></i>
     </header>
     <main>
       <section id="enterTask">
         <form>
-          <input type"text" id="textInput"/>
-          <button>Add</button>
+          <input type="text" id="textInput" placeholder="Enter task" />
+          <button type="input" id="add">Add</button>
         </form>
-
-        Add task
       </section>
-
-      <section id="task">task</section>
+      <section id="tasks"></section>
     </main>
-
-    <footer>footer</footer>
+    <footer>One action today, is one step closer to your goal tomorrow!</footer>
   </body>
-  <scrpt> </scrpt>
+  <script>
+    let tasks = [];
+
+    const tasksList = document.getElementById("tasks");
+    const taskInput = document.getElementById("textInput");
+    const inputBtn = document.getElementById("add");
+
+    function addTask(e) {
+      e.preventDefault();
+      let textValue = taskInput.value;
+      tasks.push(textValue);
+      tasksList.innerHTML = "";
+      renderTasks();
+      taskInput.value = "";
+      enterTask.style.display = "none";
+    }
+    inputBtn.addEventListener("click", addTask);
+
+    function removeTask(index) {
+      tasks = tasks.filter((task, i) => {
+        return i === index ? false : true;
+      });
+      renderTasks();
+    }
+
+    function editTask(index) {
+      const currElementText = document.querySelector(
+        `#tasks div:nth-child(${index + 1}) p`
+      ).innerText;
+      const splicedText = currElementText.slice(3);
+      removeTask(index);
+      taskInput.value = splicedText;
+    }
+
+    function renderTasks() {
+      tasksList.innerHTML = "";
+      tasks.forEach((task, i) => {
+        let currentHTML = tasksList.innerHTML;
+        let newHTML = `<div class="taskItem">
+                    <p>${i + 1}. ${task}</p>
+                    <div class="actions">
+                        <i onclick="editTask(${i})" class="fa-solid fa-pen"></i>
+                        <i onclick="removeTask(${i})" class="fa-regular fa-trash-can"></i>
+                    </div>
+                </div>`;
+
+        let amendedHTML = currentHTML + newHTML;
+        tasksList.innerHTML = amendedHTML;
+      });
+    }
+
+    renderTasks();
+  </script>
 </html>
